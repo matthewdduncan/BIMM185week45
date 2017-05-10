@@ -1,0 +1,73 @@
+create table genomes (
+genome_id int (10) unsigned not null,
+tax_id int (10) unsigned not null,
+short_name varchar (255),
+long_name text (1023),
+genome_size int (10),
+domain enum ('bacteria', 'archaea', 'eukarya'),
+accession varchar (127),
+release_date date,
+PRIMARY KEY (genome_id),
+KEY (tax_id)
+) ENGINE=InnoDB;
+
+
+create table replicons(
+replicon_id int (10) unsigned not null,
+genome_id int(10) unsigned not null,
+name varchar(255),
+gene_count int(10) unsigned,
+type enum('chromosome', 'plasmid'),
+structure enum('linear', 'circular'),
+primary key (replicon_id),
+foreign key (genome_id) references genomes(genome_id)
+) ENGINE=InnoDB;
+
+create table genes(
+gene_id int (10) unsigned not null,
+genome_id int (10) unsigned not null,
+replicon_id int (10) unsigned not null,
+locus_tag varchar(63),
+name text (1023),
+strand varchar (31),
+exon_count int (10) unsigned,
+length int(10) unsigned,
+product_name text(1023),
+primary key (gene_id),
+foreign key (genome_id) references genomes(genome_id),
+foreign key (replicon_id) references replicons(replicon_id)
+) ENGINE=InnoDB;
+
+create table exons(
+gene_id int(10) unsigned not null,
+exon varchar(255),
+left_position int(10) unsigned,
+right_position int(10) unsigned,
+length int(10) unsigned,
+foreign key (gene_id) references genes(gene_id)
+) ENGINE = InnoDB;
+
+create table gene_synonyms(
+gene_id int(10) unsigned not null,
+synonym varchar(255),
+foreign key (gene_id) references genes(gene_id)
+) ENGINE = InnoDB;
+
+create table external_references(
+gene_id int(10) unsigned not null,
+external_database varchar(255),
+external_id varchar(255),
+foreign key (gene_id) references genes(gene_id)
+) ENGINE = InnoDB;
+
+create table gene_functions(
+gene_id int(10) unsigned not null,
+function text(1023),
+foreign key (gene_id) references genes(gene_id)
+) ENGINE = InnoDB;
+
+
+
+
+
+
